@@ -4,10 +4,8 @@ import android.app.Application
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.tsato.mobile.sqldelighttest.data.AppDatabase
-import com.tsato.mobile.sqldelighttest.data.Item
-import com.tsato.mobile.sqldelighttest.data.ItemDao
-import com.tsato.mobile.sqldelighttest.data.ItemRepositoryImpl
+import com.tsato.mobile.sqldelighttest.data.*
+import com.tsato.mobile.sqldelighttest.domain.CategoryRepository
 import com.tsato.mobile.sqldelighttest.domain.ItemRepository
 import dagger.Module
 import dagger.Provides
@@ -44,6 +42,9 @@ object AppModule {
                     }
                 }
             )
+            .addMigrations(
+                AppDatabase.MIGRATION_1_2
+            )
             .build()
     }
 
@@ -55,6 +56,16 @@ object AppModule {
     @Singleton
     fun providesItemRepository(db: AppDatabase): ItemRepository {
         return ItemRepositoryImpl(db.itemDao)
+    }
+
+    @Provides
+    @Singleton
+    fun providesCategoryDao(db: AppDatabase) = db.categoryDao
+
+    @Provides
+    @Singleton
+    fun providesCategoryRepository(db: AppDatabase): CategoryRepository {
+        return CategoryRepositoryImpl(db.categoryDao)
     }
 
 }
