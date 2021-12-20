@@ -1,0 +1,18 @@
+CREATE TABLE ItemEntity (
+    id INTEGER NOT NULL PRIMARY KEY,
+    val1 INTEGER NOT NULL,
+    val2 TEXT NOT NULL,
+    update_date TEXT NOT NULL
+);
+
+getItemById:
+SELECT * FROM ItemEntity WHERE id = :id;
+
+getItems:
+SELECT * FROM ItemEntity;
+
+insertItem:
+INSERT OR REPLACE INTO ItemEntity VALUES (?, ?, ?, ?);
+
+deleteItem:
+DELETE FROM ItemEntity WHERE id = :id;

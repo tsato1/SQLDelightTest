@@ -4,6 +4,9 @@ import android.app.Application
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.squareup.sqldelight.android.AndroidSqliteDriver
+import com.squareup.sqldelight.db.SqlDriver
+import com.tsato.mobile.sqldelighttest.TestDatabase
 import com.tsato.mobile.sqldelighttest.data.*
 import com.tsato.mobile.sqldelighttest.domain.CategoryRepository
 import com.tsato.mobile.sqldelighttest.domain.ItemRepository
@@ -50,12 +53,29 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun providesSqlDriver(app: Application): SqlDriver {
+        return AndroidSqliteDriver(
+            schema = TestDatabase.Schema,
+            context = app,
+            name = "test.db"
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesItemDataSource(driver: SqlDriver): ItemDataSource {
+        return ItemDataSourceImpl(TestDatabase(driver))
+    }
+
+    @Provides
+    @Singleton
     fun providesItemDao(db: AppDatabase) = db.itemDao
 
     @Provides
     @Singleton
-    fun providesItemRepository(db: AppDatabase): ItemRepository {
-        return ItemRepositoryImpl(db.itemDao)
+    fun providesItemRepository(itemDataSource: ItemDataSource): ItemRepository {
+//        return ItemRepositoryImpl(db.itemDao)
+        return ItemRepositoryImpl(itemDataSource)
     }
 
     @Provides
